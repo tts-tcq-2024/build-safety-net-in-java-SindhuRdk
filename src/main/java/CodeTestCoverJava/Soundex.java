@@ -36,7 +36,7 @@ public class Soundex {
 
         StringBuilder soundex = new StringBuilder();
         soundex.append(Character.toUpperCase(name.charAt(0)));
-        buildSoundexCode(name, soundex);
+        processRemainingChars(name, soundex);
 
         return padSoundex(soundex);
     }
@@ -45,31 +45,34 @@ public class Soundex {
         return name == null || name.isEmpty();
     }
 
-    private static void buildSoundexCode(String name, StringBuilder soundex) {
-        char prevCode = '0'; // Initialize with '0' for no code
-        char prevChar = Character.toUpperCase(name.charAt(0)); // Track previous character
+    private static void processRemainingChars(String name, StringBuilder soundex) {
+        char prevCode = '0'; 
+        char prevChar = Character.toUpperCase(name.charAt(0)); 
         for (int i = 1; i < name.length() && soundex.length() < 4; i++) {
             char currentChar = Character.toUpperCase(name.charAt(i));
             char code = getSoundexCode(currentChar);
-            if (isIgnoredCharacter(currentChar, prevChar)) {
-                continue; // Ignore 'H' and 'W'
+            if (shouldIgnoreCharacter(currentChar, prevChar)) {
+                continue;
             }
-            appendIfValidCode(soundex, code, prevCode);
+            appendCodeIfValid(soundex, code, prevCode);
             prevCode = code;
-            prevChar = currentChar; // Update previous character
+            prevChar = currentChar; 
         }
     }
 
-    private static boolean isIgnoredCharacter(char currentChar, char prevChar) {
-        // Ignore 'H' and 'W' except when the previous character is a vowel
-        return (currentChar == 'H' || currentChar == 'W') && !isVowel(prevChar);
+    private static boolean shouldIgnoreCharacter(char currentChar, char prevChar) {
+        return isIgnoredCharacter(currentChar) && !isVowel(prevChar);
+    }
+
+    private static boolean isIgnoredCharacter(char currentChar) {
+        return currentChar == 'H' || currentChar == 'W';
     }
 
     private static boolean isVowel(char c) {
         return "AEIOUY".indexOf(c) >= 0;
     }
 
-    private static void appendIfValidCode(StringBuilder soundex, char code, char prevCode) {
+    private static void appendCodeIfValid(StringBuilder soundex, char code, char prevCode) {
         if (isValidCode(code, prevCode) && soundex.length() < 4) {
             soundex.append(code);
         }
