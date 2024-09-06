@@ -47,11 +47,26 @@ public class Soundex {
 
     private static void buildSoundexCode(String name, StringBuilder soundex) {
         char prevCode = '0'; // Initialize with '0' for no code
+        char prevChar = Character.toUpperCase(name.charAt(0)); // Track previous character
         for (int i = 1; i < name.length() && soundex.length() < 4; i++) {
-            char code = getSoundexCode(name.charAt(i));
+            char currentChar = Character.toUpperCase(name.charAt(i));
+            char code = getSoundexCode(currentChar);
+            if (isIgnoredCharacter(currentChar, prevChar)) {
+                continue; // Ignore 'H' and 'W'
+            }
             appendIfValidCode(soundex, code, prevCode);
             prevCode = code;
+            prevChar = currentChar; // Update previous character
         }
+    }
+
+    private static boolean isIgnoredCharacter(char currentChar, char prevChar) {
+        // Ignore 'H' and 'W' except when the previous character is a vowel
+        return (currentChar == 'H' || currentChar == 'W') && !isVowel(prevChar);
+    }
+
+    private static boolean isVowel(char c) {
+        return "AEIOUY".indexOf(c) >= 0;
     }
 
     private static void appendIfValidCode(StringBuilder soundex, char code, char prevCode) {
@@ -65,7 +80,6 @@ public class Soundex {
     }
 
     private static char getSoundexCode(char c) {
-        c = Character.toUpperCase(c);
         return soundexMap.getOrDefault(c, '0');
     }
 
