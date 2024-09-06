@@ -30,23 +30,34 @@ public class Soundex {
     }
 
     public static String generateSoundex(String name) {
-        if (name == null || name.isEmpty()) {
+        if (isInvalidInput(name)) {
             return "";
         }
 
         StringBuilder soundex = new StringBuilder();
         soundex.append(Character.toUpperCase(name.charAt(0)));
-        char prevCode = '0'; // Initialize with '0' for no code
+        buildSoundexCode(name, soundex);
 
+        return padSoundex(soundex);
+    }
+
+    private static boolean isInvalidInput(String name) {
+        return name == null || name.isEmpty();
+    }
+
+    private static void buildSoundexCode(String name, StringBuilder soundex) {
+        char prevCode = '0'; // Initialize with '0' for no code
         for (int i = 1; i < name.length() && soundex.length() < 4; i++) {
             char code = getSoundexCode(name.charAt(i));
-            if (code != '0' && code != prevCode) {
+            if (isValidCode(code, prevCode)) {
                 soundex.append(code);
                 prevCode = code;
             }
         }
+    }
 
-        return padSoundex(soundex);
+    private static boolean isValidCode(char code, char prevCode) {
+        return code != '0' && code != prevCode;
     }
 
     private static char getSoundexCode(char c) {
