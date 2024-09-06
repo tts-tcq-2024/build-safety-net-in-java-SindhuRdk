@@ -51,22 +51,22 @@ public class Soundex {
 
         for (int i = 1; i < name.length() && soundex.length() < 4; i++) {
             char currentChar = Character.toUpperCase(name.charAt(i));
-            char code = getSoundexCode(currentChar);
-
-            // Skip H and W but allow them to affect adjacent consonants
-            if (shouldSkipCharacter(currentChar, prevChar)) {
-                continue;
-            }
-
-            // Only append the code if it's valid and different from the previous code
-            appendCodeIfValid(soundex, code, prevCode);
-            prevCode = code;
-            prevChar = currentChar;
+            processChar(soundex, currentChar, prevChar, prevCode);
+            prevCode = getSoundexCode(currentChar);
+            prevChar = currentChar; 
         }
     }
 
+    private static void processChar(StringBuilder soundex, char currentChar, char prevChar, char prevCode) {
+        if (shouldSkipCharacter(currentChar, prevChar)) {
+            return;
+        }
+
+        char code = getSoundexCode(currentChar);
+        appendCodeIfValid(soundex, code, prevCode);
+    }
+
     private static boolean shouldSkipCharacter(char currentChar, char prevChar) {
-        // Skip H and W but allow them to affect consonants if adjacent to a consonant
         return isIgnoredCharacter(currentChar) && !isVowel(prevChar);
     }
 
