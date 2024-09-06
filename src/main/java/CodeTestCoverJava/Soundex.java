@@ -49,10 +49,14 @@ public class Soundex {
         char prevCode = '0'; // Initialize with '0' for no code
         for (int i = 1; i < name.length() && soundex.length() < 4; i++) {
             char code = getSoundexCode(name.charAt(i));
-            if (isValidCode(code, prevCode)) {
-                soundex.append(code);
-                prevCode = code;
-            }
+            appendIfValidCode(soundex, code, prevCode);
+            prevCode = code;
+        }
+    }
+
+    private static void appendIfValidCode(StringBuilder soundex, char code, char prevCode) {
+        if (isValidCode(code, prevCode) && soundex.length() < 4) {
+            soundex.append(code);
         }
     }
 
