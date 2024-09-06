@@ -36,7 +36,7 @@ public class Soundex {
 
         StringBuilder soundex = new StringBuilder();
         soundex.append(Character.toUpperCase(name.charAt(0)));
-        processRemainingChars(name, soundex);
+        processCharsForSoundex(name, soundex);
 
         return padSoundex(soundex);
     }
@@ -45,22 +45,28 @@ public class Soundex {
         return name == null || name.isEmpty();
     }
 
-    private static void processRemainingChars(String name, StringBuilder soundex) {
+    private static void processCharsForSoundex(String name, StringBuilder soundex) {
         char prevCode = '0'; 
         char prevChar = Character.toUpperCase(name.charAt(0)); 
+
         for (int i = 1; i < name.length() && soundex.length() < 4; i++) {
             char currentChar = Character.toUpperCase(name.charAt(i));
-            char code = getSoundexCode(currentChar);
-            if (shouldIgnoreCharacter(currentChar, prevChar)) {
-                continue;
-            }
-            appendCodeIfValid(soundex, code, prevCode);
-            prevCode = code;
+            processChar(soundex, currentChar, prevChar, prevCode);
+            prevCode = getSoundexCode(currentChar);
             prevChar = currentChar; 
         }
     }
 
-    private static boolean shouldIgnoreCharacter(char currentChar, char prevChar) {
+    private static void processChar(StringBuilder soundex, char currentChar, char prevChar, char prevCode) {
+        if (shouldSkipCharacter(currentChar, prevChar)) {
+            return;
+        }
+
+        char code = getSoundexCode(currentChar);
+        appendCodeIfValid(soundex, code, prevCode);
+    }
+
+    private static boolean shouldSkipCharacter(char currentChar, char prevChar) {
         return isIgnoredCharacter(currentChar) && !isVowel(prevChar);
     }
 
