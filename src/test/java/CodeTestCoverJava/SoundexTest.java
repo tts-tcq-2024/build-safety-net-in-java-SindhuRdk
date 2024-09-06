@@ -22,34 +22,40 @@ public class SoundexTest {
     }
 
     @Test
-    public void testNoConsonants() {
+    public void testVowels() {
+        // No consonants, expect padding
         assertEquals("A000", Soundex.generateSoundex("AEIOU"));
     }
 
     @Test
-    public void testConsonantsOnly() {
-        assertEquals("S532", Soundex.generateSoundex("Smith")); // Expected S532
-        assertEquals("R163", Soundex.generateSoundex("Robert")); // Expected R163
+    public void testConsonants() {
+        // Standard consonants with Soundex encoding
+        assertEquals("S532", Soundex.generateSoundex("Smith"));
+        assertEquals("R163", Soundex.generateSoundex("Robert"));
     }
 
     @Test
     public void testRepeatedConsonants() {
-        assertEquals("T520", Soundex.generateSoundex("Ttfn")); // Expected T520
+        // Repeated consonants should not be re-encoded
+        assertEquals("T520", Soundex.generateSoundex("Ttfn"));
     }
 
     @Test
     public void testPadding() {
-        assertEquals("W252", Soundex.generateSoundex("Wright")); // Expected W252
-        assertEquals("P200", Soundex.generateSoundex("Park")); // Expected P200
+        // Test padding for fewer than 4 characters
+        assertEquals("W252", Soundex.generateSoundex("Wright"));
+        assertEquals("P200", Soundex.generateSoundex("Park"));
     }
 
     @Test
     public void testMixedCase() {
-        assertEquals("R163", Soundex.generateSoundex("RoBeRt")); // Expected R163
+        // Mixed case input should result in the same output
+        assertEquals("R163", Soundex.generateSoundex("RoBeRt"));
     }
 
     @Test
     public void testHAndWHandling() {
-        assertEquals("R300", Soundex.generateSoundex("RWH")); // Expected R300
+        // 'H' and 'W' should be handled as non-encoded characters
+        assertEquals("R300", Soundex.generateSoundex("RWH"));
     }
 }
